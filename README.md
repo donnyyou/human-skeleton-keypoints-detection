@@ -1,1 +1,1 @@
-Welcome the tycoon of ACM -- reatank!
+Sleep!
