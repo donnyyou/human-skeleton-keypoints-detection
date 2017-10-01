@@ -2,5 +2,7 @@ __pycache__
 .ipynb_checkpoints
 .vscode
 data
+document
+
 *.ipynb
-.pyc
+*.pyc
