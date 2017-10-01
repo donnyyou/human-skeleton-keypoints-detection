@@ -23,7 +23,6 @@ def get_human_dataframe(data="train", drop_0=True, ratio=True):
     """
 
     # 图片矩阵转为人物矩阵
-    # 这个写的有点蠢，不过没想好怎么写成向量化的
     @numba.jit()
     def reshape(kp):
         human_annotations = []
