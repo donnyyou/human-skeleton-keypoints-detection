@@ -87,7 +87,7 @@ class Image(object):
             for i in range(14):
                 if kp[i, 2] == 1:
                     draw.rectangle([kp[i, 0] - kp_size, kp[i, 1] - kp_size, \
-                                    kp[i, 0] + kp_size, kp[i, 1] + kp_size],\
+                                    kp[i, 0] + kp_size, kp[i, 1] + kp_size], \
                                     outline=point_fill, fill=point_fill)
             # draw lines
             if line:
@@ -97,7 +97,7 @@ class Image(object):
                                       [0, 6], [3, 9], [6, 9]])
                 for i in range(line_list.shape[0]):
                     if kp[line_list[i, 0], 2] == 1 and kp[line_list[i, 1], 2] == 1:
-                        draw.line([(kp[line_list[i, 0], 0], kp[line_list[i, 0], 1]),
-                                   (kp[line_list[i, 1], 0], kp[line_list[i, 1], 1])],
+                        draw.line([(kp[line_list[i, 0], 0], kp[line_list[i, 0], 1]), \
+                                   (kp[line_list[i, 1], 0], kp[line_list[i, 1], 1])], \
                                    width=line_width, fill=line_fill)
         return image_kp
