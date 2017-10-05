@@ -6,3 +6,5 @@ document
 
 *.ipynb
 *.pyc
+*.h5
+*.csv
