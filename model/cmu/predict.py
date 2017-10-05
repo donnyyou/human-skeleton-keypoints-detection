@@ -24,6 +24,7 @@ import util
 import os
 import pandas as pd
 import time
+import tensorflow as tf
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -293,7 +294,7 @@ def predict(path, show=False):
                     subset = np.vstack([subset, row])
 
     # delete some rows of subset which has few parts occur
-    deleteIdx = [];
+    deleteIdx = []
     for i in range(len(subset)):
         if subset[i][-1] < 4 or subset[i][-2]/subset[i][-1] < 0.4:
             deleteIdx.append(i)
@@ -328,15 +329,22 @@ def predict(path, show=False):
     return human
 
 if __name__ == "__main__":
+    # 限制显存
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.7
+    set_session(tf.Session(config=config))
+    
     # In[4]:
 
     # Create keras model and load weights
-    weights_path = "./checkpoint/model.h5"
 
+    weights_path = "./checkpoint/model.h5"
     input_shape = (None,None,3)
 
     img_input = Input(shape=input_shape)
-
+    weights_path = "./checkpoint/model.h5"
     stages = 6
     np_branch1 = 38
     np_branch2 = 19
@@ -370,12 +378,10 @@ if __name__ == "__main__":
         kp = predict(PATH + image).T
         kp["id"] = image_id
         results.append(kp)
-        if i % 1 == 0:
+        if (i+1) % 100 == 0:
             print("%d/%d, finished in %.2fs"%(i+1, len(os.listdir(PATH)), time.time()-start))
-        if i == 0:
-            break
     results = pd.concat(results, axis=0)
-    results.to_csv("result/val_part1.csv")
+    results.to_csv("result/val.csv")
 
 
 # ---
