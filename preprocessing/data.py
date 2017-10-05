@@ -86,9 +86,9 @@ def get_human_dataframe(data="train", drop_0=True, ratio=True):
     return human
 
 def pick_one(dataset="train"):
-    path_train = r"E:\Jupyter Notebook\Data Science\AI Challenger\Bone\data\train_data\keypoint_train_images_20170902"
-    path_validation = r"E:\Jupyter Notebook\Data Science\AI Challenger\Bone\data\validation_data\keypoint_validation_images_20170911"
-    path_test_A = r"E:\Jupyter Notebook\Data Science\AI Challenger\Bone\data\test_data_A\keypoint_test_a_images_20170923"
+    path_train = r"E:\Jupyter Notebook\Data Science\AI Challenger\human-skeleton-keypoints-detection\data\train_data\keypoint_train_images_20170902"
+    path_validation = r"E:\Jupyter Notebook\Data Science\AI Challenger\human-skeleton-keypoints-detection\data\validation_data\keypoint_validation_images_20170911"
+    path_test_A = r"E:\Jupyter Notebook\Data Science\AI Challenger\human-skeleton-keypoints-detection\data\test_data_A\keypoint_test_a_images_20170923"
     path_test_B = None
     path = {"train": path_train, "validation": path_validation, "test_A": path_test_A, "test_B": path_test_B}[dataset]
     return random.choice(os.listdir(path))[: -4]
