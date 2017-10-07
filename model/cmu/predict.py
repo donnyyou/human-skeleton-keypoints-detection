@@ -24,9 +24,10 @@ import util
 import os
 import pandas as pd
 import time
-import tensorflow as tf
 
-# get_ipython().run_line_magic('matplotlib', 'inline')
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+import argparse
 
 
 # Helper functions to create a model
@@ -329,22 +330,22 @@ def predict(path, show=False):
     return human
 
 if __name__ == "__main__":
-    # 限制显存
-    import tensorflow as tf
-    from keras.backend.tensorflow_backend import set_session
+    # 切分
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cut', type=int, default=0)
+    cut = parser.parse_args().cut - 1
+    step = 50
+
+    # 显存占用设置
     config = tf.ConfigProto()
-    config.gpu_options.per_process_gpu_memory_fraction = 0.7
-    set_session(tf.Session(config=config))
-    
-    # In[4]:
+    config.gpu_options.allow_growth = True
+    session = tf.Session(config=config)
 
     # Create keras model and load weights
-
     weights_path = "./checkpoint/model.h5"
     input_shape = (None,None,3)
-
     img_input = Input(shape=input_shape)
-    weights_path = "./checkpoint/model.h5"
+
     stages = 6
     np_branch1 = 38
     np_branch2 = 19
@@ -368,21 +369,23 @@ if __name__ == "__main__":
     model.load_weights(weights_path)
 
 
-    # In[5]:
-
     PATH = r"../../data/test_data_A/keypoint_test_a_images_20170923/"
     results = []
     start = time.time()
     for i, image in enumerate(os.listdir(PATH)):
+        if i < cut*step or i >= (cut+1)*step:
+            continue
         image_id = image[: -4]
         kp = predict(PATH + image).T
         kp["id"] = image_id
         results.append(kp)
-        if (i+1) % 100 == 0:
+        if (i+1) % step == 0:
+            results = pd.concat(results, axis=0)
+            results.to_csv("result/testA_part%d.csv"%((i+1)/step))
+            results = []
+            print("file %i has been saved."%((i+1)/step))
             print("%d/%d, finished in %.2fs"%(i+1, len(os.listdir(PATH)), time.time()-start))
-    results = pd.concat(results, axis=0)
-    results.to_csv("result/val.csv")
-
+            start = time.time()
 
 # ---
 
