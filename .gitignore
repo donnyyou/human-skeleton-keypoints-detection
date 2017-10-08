@@ -8,3 +8,7 @@ document
 *.pyc
 *.h5
 *.csv
+*.json
+*.rar
+*.zip
+*.7z

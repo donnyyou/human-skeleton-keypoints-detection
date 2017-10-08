@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 import itertools
 
 def calc_head(req):
@@ -23,7 +25,7 @@ def calc_head(req):
 
             neck = '['+str((L_sho[0]+R_sho[0])/2)+','+str((L_sho[1]+R_sho[1])/2)+']'
         else:
-            return -1
+            return np.nan
     else:
         neck = req[0]
 
@@ -40,12 +42,12 @@ def calc_head(req):
     for per in list(itertools.permutations(L,2)):
         if symmetric(req[per[0]],req[per[1]],neck) != -1:
             return symmetric(req[per[0]],req[per[1]],neck)
-    return -1
+    return np.nan
     
 
 def symmetric(p1,p2,p3):
     if p1 == -1 or p2 == -1 or p3 == -1:
-        return -1
+        return np.nan
     p1 = [float(p1[1:p1.index(',')]),float(p1[p1.index(',')+1:len(p1)-1])]
     p2 = [float(p2[1:p2.index(',')]),float(p2[p2.index(',')+1:len(p2)-1])]
     p3 = [float(p3[1:p3.index(',')]),float(p3[p3.index(',')+1:len(p3)-1])]
@@ -55,5 +57,5 @@ def symmetric(p1,p2,p3):
         X = p3[0] - 2*A*(A*p3[0]-p3[1]+C)/(A**2+1)
         Y = p3[1] + 2*(A*p3[0]-p3[1]+C)/(A**2+1)
     except:
-        return -1
+        return np.nan
     return [X,Y]
