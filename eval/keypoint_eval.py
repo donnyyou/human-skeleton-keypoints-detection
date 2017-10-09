@@ -80,11 +80,11 @@ def load_predictions(prediction_file, return_dict):
         exit(return_dict['error'])
 
     for pred in preds:
-        if 'image_id' not in pred.keys():
+        if 'image_id' not in list(pred.keys()):
             return_dict['warning'].append('There is an invalid annotation info, \
                 likely missing key \'image_id\'.')
             continue
-        if 'keypoint_annotations' not in pred.keys():
+        if 'keypoint_annotations' not in list(pred.keys()):
             return_dict['warning'].append(pred['image_id']+\
                 ' does not have key \'keypoint_annotations\'.')
             continue
@@ -104,13 +104,13 @@ def load_predictions(prediction_file, return_dict):
 def compute_oks(anno, predict, delta):
     """Compute oks matrix (size gtN*pN)."""
 
-    anno_count = len(anno['keypoint_annos'].keys())
-    predict_count = len(predict.keys())
+    anno_count = len(list(anno['keypoint_annos'].keys()))
+    predict_count = len(list(predict.keys()))
     oks = np.zeros((anno_count, predict_count))
 
     # for every human keypoint annotation
     for i in range(anno_count):
-        anno_key = anno['keypoint_annos'].keys()[i]
+        anno_key = list(anno['keypoint_annos'].keys())[i]
         anno_keypoints = np.reshape(anno['keypoint_annos'][anno_key], (14, 3))
         visible = anno_keypoints[:, 2] == 1
         bbox = anno['human_annos'][anno_key]
@@ -121,7 +121,7 @@ def compute_oks(anno, predict, delta):
         else:
             # for every predicted human
             for j in range(predict_count):
-                predict_key = predict.keys()[j]
+                predict_key = list(predict.keys())[j]
                 predict_keypoints = np.reshape(predict[predict_key], (14, 3))
                 dis = np.sum((anno_keypoints[visible, :2] \
                     - predict_keypoints[visible, :2])**2, axis=1)
@@ -153,7 +153,7 @@ def keypoint_eval(predictions, annotations, return_dict):
             # otherwise report warning
             return_dict['warning'].append(image_id+' is not in the prediction JSON file.')
             # number of humen in ground truth annotations
-            gt_n = len(annotations['annos'][image_id]['human_annos'].keys())
+            gt_n = len(list(annotations['annos'][image_id]['human_annos'].keys()))
             # fill 0 in oks scores
             oks_all = np.concatenate((oks_all, np.zeros((gt_n))), axis=0)
             # accumulate total num by ground truth number
@@ -189,24 +189,24 @@ def main():
     start_time = time.time()
     annotations = load_annotations(anno_file=args.ref,
                                    return_dict=return_dict)
-    print 'Complete reading annotation JSON file in %.2f seconds.' %(time.time() - start_time)
+    print('Complete reading annotation JSON file in %.2f seconds.' %(time.time() - start_time))
 
     # Load prediction JSON file
     start_time = time.time()
     predictions = load_predictions(prediction_file=args.submit,
                                    return_dict=return_dict)
-    print 'Complete reading prediction JSON file in %.2f seconds.' %(time.time() - start_time)
+    print('Complete reading prediction JSON file in %.2f seconds.' %(time.time() - start_time))
 
     # Keypoint evaluation
     start_time = time.time()
     return_dict = keypoint_eval(predictions=predictions,
                                 annotations=annotations,
                                 return_dict=return_dict)
-    print 'Complete evaluation in %.2f seconds.' %(time.time() - start_time)
+    print('Complete evaluation in %.2f seconds.' %(time.time() - start_time))
 
     # Print return_dict and final score
     pprint.pprint(return_dict)
-    print 'Score: ', '%.8f' % return_dict['score']
+    print('Score: ', '%.8f' % return_dict['score'])
 
 
 if __name__ == "__main__":
