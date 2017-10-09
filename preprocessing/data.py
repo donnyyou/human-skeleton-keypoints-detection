@@ -7,6 +7,22 @@ import numpy as np
 import numba
 import pandas as pd
 
+# 图片矩阵转为人物矩阵
+def reshape(kp):
+    human_annotations = []
+    keypoint_annotations = []
+    image_id = []
+    for i in kp.index:
+        for person in kp.loc[i, "human_annotations"].keys():
+            human_annotations.append(kp.loc[i, "human_annotations"][person])
+            keypoint_annotations.append(kp.loc[i, "keypoint_annotations"][person])
+            image_id.append(kp.loc[i, "image_id"])
+    human = pd.DataFrame({"human_annotations": human_annotations,
+                            "keypoint_annotations": keypoint_annotations,
+                            "image_id": image_id})
+    return human
+
+
 def get_human_dataframe(data="train", drop_0=True, ratio=True):
     """
     获取人物位点的DataFrame.
@@ -22,26 +38,10 @@ def get_human_dataframe(data="train", drop_0=True, ratio=True):
     human: DataFrame
     """
 
-    # 图片矩阵转为人物矩阵
-    @numba.jit()
-    def reshape(kp):
-        human_annotations = []
-        keypoint_annotations = []
-        image_id = []
-        for i in kp.index:
-            for person in kp.loc[i, "human_annotations"].keys():
-                human_annotations.append(kp.loc[i, "human_annotations"][person])
-                keypoint_annotations.append(kp.loc[i, "keypoint_annotations"][person])
-                image_id.append(kp.loc[i, "image_id"])
-        human = pd.DataFrame({"human_annotations": human_annotations,
-                              "keypoint_annotations": keypoint_annotations,
-                              "image_id": image_id})
-        return human
-
     # 这里我不太确定路径，不知道如果调用这个函数的话到底是从哪里算"./"
     # 也没敢写成绝对路径，因为上级路径可能不一样
-    path_train = r"./data/train_data/keypoint_train_annotations_20170909.json"
-    path_validation = r"./data/validation_data/keypoint_validation_annotations_20170911.json"
+    path_train = r"E:\Jupyter Notebook\Data Science\AI Challenger\human-skeleton-keypoints-detection\data\train_data\keypoint_train_annotations_20170909.json"
+    path_validation = r"E:\Jupyter Notebook\Data Science\AI Challenger\human-skeleton-keypoints-detection\data\validation_data\keypoint_validation_annotations_20170911.json"
 
     # read data
     if data == "train":

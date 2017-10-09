@@ -1,2 +1,2 @@
-from preprocessing.data import get_human_dataframe, pick_one
+from preprocessing import data
 from preprocessing.visualization import Image
