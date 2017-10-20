@@ -10,13 +10,13 @@ class Image(object):
     def __init__(self, id):
         # 图片路径
         path_train_im = r"./data/train_data/keypoint_train_images_20170902/"
-        path_validation_im = r"./data/validation_data/keypoint_validation_images_20170911/"
+        path_validation_im = r"E:/Jupyter Notebook/Data Science/AI Challenger/human-skeleton-keypoints-detection/data/validation_data/keypoint_validation_images_20170911/"
         path_test_A_im = r"./data./test_data_A./keypoint_test_a_images_20170923/"
         path_test_B_im = r""
 
         # json路径
         path_train_json = r"./data/train_data/keypoint_train_annotations_20170909.json"
-        path_validation_json = r"./data/validation_data/keypoint_validation_annotations_20170911.json"
+        path_validation_json = r"E:/Jupyter Notebook/Data Science/AI Challenger/human-skeleton-keypoints-detection/data/validation_data/keypoint_validation_annotations_20170911.json"
 
         # 查找图片并打开
         for dataset, path in enumerate([path_train_im, path_validation_im, path_test_A_im, path_test_B_im]):

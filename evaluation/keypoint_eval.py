@@ -39,6 +39,7 @@ import argparse
 import pprint
 
 import numpy as np
+import pandas as pd
 
 
 def load_annotations(anno_file, return_dict):

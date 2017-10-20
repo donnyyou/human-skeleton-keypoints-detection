@@ -5,8 +5,6 @@ import numpy as np
 import itertools
 
 from head import calc_head
-sys.path.append("../..")
-import preprocessing
 
 # Keypoints
 
@@ -18,11 +16,11 @@ import preprocessing
 # (8, 'Rhip'), (9, 'Rkne'), (10, 'Rank'), (11, 'Lhip'), (12, 'Lkne'), (13, 'Lank'), (14, 'Leye'), (15, 'Reye'), 
 # (16, 'Lear'), (17, 'Rear'), (18, 'Head')]
 
-def generate_result():
+def generate_result(file="./result/val/val_part"):
     # read all data and concat to a dataframe
     data = []
     for i in range(1, 601):
-        data.append(pd.read_csv("./result/testA/testA_part%d.csv"%(i)))
+        data.append(pd.read_csv(file+"%d.csv"%(i)))
     data = pd.concat(data, axis=0)
     data.reset_index(drop=True, inplace=True)
     data.drop("Unnamed: 0", axis=1, inplace=True)
@@ -50,13 +48,13 @@ def generate_result():
 
     for i in range(1, 15):
         data[i] = data[i].apply(convert_xy_to_xyv)
+
+    # sum keypoints to a list and add it to dataframe
+    data["keypoints"] = data[list(range(1,15))].sum(axis=1)
         
     return data
 
 def generate_submission(data):
-    # sum keypoints to a list and add it to dataframe
-    data["keypoints"] = data[list(range(1,15))].sum(axis=1)
-
     # groupby image and generate submission
     def groupby_image(image_id):
         image = data.loc[data["image_id"] == image_id, "keypoints"]
@@ -66,7 +64,7 @@ def generate_submission(data):
     submission["keypoint_annotations"] = submission["image_id"].apply(groupby_image)
     
     # save
-    submission.to_json("./sub.json", orient="columns")
+    submission.to_json("./sub.json", orient="records")
 
 if __name__ == "__main__":
     data = generate_result()
