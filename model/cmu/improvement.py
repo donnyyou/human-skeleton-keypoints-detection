@@ -31,12 +31,14 @@ def _revision(boxes, subset, subset_xys, candidates):
     # some threshold
     HUMAN_THRESHOLD = 4
     PEAK_THRESHOLD = 0
+    INTERSECTION_THRESHOLD = 1
 
     # total heatmap score
     peak_score = np.sum(subset_xys.T.apply(lambda xys: 0 if int(xys) == -1 else xys[2]), axis=0)
     subset["peak_score"] = peak_score
 
     for i in subset.index:
+
         # find all points that in the box of main person
         box_id = subset.loc[i, "box_id"]
         box = boxes[box_id]
@@ -65,8 +67,8 @@ def _revision(boxes, subset, subset_xys, candidates):
             for index in itertools.combinations(parts, i):
                 person = subset.loc[parts[index]+[i], :18]
                 score = subset.loc[parts[index], "peak_score"].sum()
-                # check whether there's any intersection with each other
-                if not (np.sum(person > 0) == 1).all():
+                # check the intersection
+                if not np.sum(np.sum(person > 0) <= 1) <= INTERSECTION_THRESHOLD:
                     continue
                 else:
                     if score > max_score:
@@ -74,7 +76,8 @@ def _revision(boxes, subset, subset_xys, candidates):
                         appendix = parts[index]
         
         # combination
-        subset.loc[i, :18] = subset.loc[appendix + [i], :18].apply(max)
+        # TODO: max score
+        # subset.loc[i, :18] = subset.loc[appendix + [i], :18].apply(max)
         subset.loc[i, 18:] = subset.loc[appendix + [i], 18:].sum()
 
     # generate result
